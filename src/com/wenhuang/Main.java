@@ -1,5 +1,9 @@
 package com.wenhuang;
 
+import com.wenhuang.gameview.GameView;
+import com.wenhuang.gameview.Level1GameView;
+import com.wenhuang.sprites.Moses;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -10,14 +14,18 @@ public class Main extends JPanel {
     public static final int COLUMN = WIDTH / CELL_SIZE;
     public static final int ROW = HEIGHT / CELL_SIZE;
 
+    Moses moses;
+    GameView gameView;
 
     public Main() {
-
+        moses = new Moses(1, 1);
+        gameView = new Level1GameView();
     }
 
     @Override
     public void paintComponent(Graphics g) {
-
+        gameView.drawView(g);
+        moses.drawSprite(g);
     }
 
     @Override
