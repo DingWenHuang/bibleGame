@@ -17,12 +17,22 @@ public class Main extends JPanel implements KeyListener {
     public static final int ROW = HEIGHT / CELL_SIZE;
 
     Moses moses;
-    GameView gameView;
+    public static GameView gameView;
 
     public Main() {
-        moses = new Moses(1, 1);
-        gameView = new Level1GameView();
+        resetGame(new Level1GameView());
         addKeyListener(this);
+    }
+
+    private void resetGame(GameView game) {
+        moses = new Moses(1, 1);
+        gameView = game;
+        repaint();
+    }
+
+    private void die() {
+        JOptionPane.showMessageDialog(null, "You Die");
+        resetGame(new Level1GameView());
     }
 
     @Override
@@ -55,17 +65,50 @@ public class Main extends JPanel implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         Point mosesPoint = moses.getRelativePosition();
+        String result;
         if (e.getKeyCode() == 37 && mosesPoint.x > 1) {
-            mosesPoint.x -= 1;
+            result = moses.overlap(mosesPoint.x - 1, mosesPoint.y);
+            if (result.equals("DIE")) {
+                die();
+                return;
+            }
+            if (!result.equals("CANNOT MOVE")) {
+                mosesPoint.x -= 1;
+            }
+
         }
         if (e.getKeyCode() == 38 && mosesPoint.y > 1) {
-            mosesPoint.y -= 1;
+            result = moses.overlap(mosesPoint.x, mosesPoint.y - 1);
+            if (result.equals("DIE")) {
+                die();
+                return;
+            }
+            if (!result.equals("CANNOT MOVE")) {
+                mosesPoint.y -= 1;
+            }
+
         }
         if (e.getKeyCode() == 39 && mosesPoint.x < COLUMN) {
-            mosesPoint.x += 1;
+            result = moses.overlap(mosesPoint.x + 1, mosesPoint.y);
+            if (result.equals("DIE")) {
+                die();
+                return;
+            }
+            if (!result.equals("CANNOT MOVE")) {
+                mosesPoint.x += 1;
+            }
+
         }
         if (e.getKeyCode() == 40 && mosesPoint.y < ROW) {
-            mosesPoint.y += 1;
+            result = moses.overlap(mosesPoint.x, mosesPoint.y + 1);
+            if (result.equals("DIE")) {
+                die();
+                return;
+            }
+            if (!result.equals("CANNOT MOVE")) {
+                mosesPoint.y += 1;
+            }
+
         }
         moses.setPosition(mosesPoint);
         repaint();
