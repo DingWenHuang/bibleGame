@@ -20,6 +20,11 @@ public abstract class Sprites {
         setPosition(point.x, point.y);
     }
 
+    public void setNullPosition() {
+        relativePosition = null;
+        absolutePosition = null;
+    }
+
     public Point getRelativePosition() {
         if (relativePosition != null) {
             return new Point(relativePosition);

@@ -10,6 +10,10 @@ import java.util.ArrayList;
 
 public abstract class GameView {
 
+    public Door getDoor() {
+        return door;
+    }
+
     protected ArrayList<Sprites> elements;
     protected ImageIcon img;
     protected Door door;
