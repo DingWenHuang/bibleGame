@@ -16,8 +16,22 @@ public abstract class Sprites {
         absolutePosition = new Point((x - 1) * Main.CELL_SIZE, (y - 1) * Main.CELL_SIZE);
     }
 
+    public void setPosition(Point point) {
+        setPosition(point.x, point.y);
+    }
+
+    public Point getRelativePosition() {
+        if (relativePosition != null) {
+            return new Point(relativePosition);
+        } else {
+            return null;
+        }
+    }
+
     public void drawSprite(Graphics g) {
-        img.paintIcon(null, g, absolutePosition.x, absolutePosition.y);
+        if (relativePosition != null) {
+            img.paintIcon(null, g, absolutePosition.x, absolutePosition.y);
+        }
     }
 
     public abstract String overlap(int x, int y);
