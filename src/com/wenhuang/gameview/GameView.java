@@ -14,6 +14,10 @@ public abstract class GameView {
         return door;
     }
 
+    public ArrayList<Sprites> getElements() {
+        return elements;
+    }
+
     protected ArrayList<Sprites> elements;
     protected ImageIcon img;
     protected Door door;

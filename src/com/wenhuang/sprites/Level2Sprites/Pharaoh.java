@@ -13,6 +13,6 @@ public class Pharaoh extends Sprites {
 
     @Override
     public String overlap(int x, int y) {
-        return "null";
+        return super.overlap(x, y);
     }
 }

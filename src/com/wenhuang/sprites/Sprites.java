@@ -4,8 +4,9 @@ import com.wenhuang.Main;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
-public abstract class Sprites {
+public class Sprites {
 
     protected Point relativePosition;
     protected Point absolutePosition;
@@ -39,5 +40,13 @@ public abstract class Sprites {
         }
     }
 
-    public abstract String overlap(int x, int y);
+    public String overlap(int x, int y) {
+        ArrayList<Sprites> sprites = Main.gameView.getElements();
+        for (Sprites s : sprites) {
+            if (s.getRelativePosition() != null && x == s.getRelativePosition().x && y == s.getRelativePosition().y) {
+                return "CANNOT MOVE";
+            }
+        }
+        return "null";
+    }
 }

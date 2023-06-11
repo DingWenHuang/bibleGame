@@ -13,6 +13,6 @@ public class Anubis extends Sprites {
 
     @Override
     public String overlap(int x, int y) {
-        return "null";
+        return super.overlap(x, y);
     }
 }

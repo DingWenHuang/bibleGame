@@ -83,6 +83,7 @@ public class Moses extends Sprites {
             ArrayList<Stone> stones = ((Level3GameView) Main.gameView).getStones();
             for (Stone sprites : stones) {
                 if (sprites.getRelativePosition() != null && sprites.getRelativePosition().x == x && sprites.getRelativePosition().y == y) {
+                    System.out.println(((Level3GameView) Main.gameView).getCount());
                     sprites.setNullPosition();
                     ((Level3GameView) Main.gameView).setCount(1);
                 }

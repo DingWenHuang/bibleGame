@@ -4,7 +4,16 @@ import com.wenhuang.gameview.GameView;
 import com.wenhuang.gameview.Level1GameView;
 import com.wenhuang.gameview.Level2GameView;
 import com.wenhuang.gameview.Level3GameView;
+import com.wenhuang.sprites.Door;
+import com.wenhuang.sprites.Level1Sprites.Bug;
+import com.wenhuang.sprites.Level1Sprites.Frog;
+import com.wenhuang.sprites.Level1Sprites.Ice;
+import com.wenhuang.sprites.Level1Sprites.Tombstone;
+import com.wenhuang.sprites.Level2Sprites.Anubis;
+import com.wenhuang.sprites.Level2Sprites.Cat;
+import com.wenhuang.sprites.Level2Sprites.Pharaoh;
 import com.wenhuang.sprites.Moses;
+import com.wenhuang.sprites.Sprites;
 
 import javax.swing.*;
 import java.awt.*;
@@ -64,6 +73,100 @@ public class Main extends JPanel implements KeyListener {
         }
     }
 
+    private boolean overlapForMoses(int x, int y, Moses m) {
+        for (Sprites sprites : gameView.getElements()) {
+            if (sprites.getRelativePosition() != null) {
+                if (x == m.getRelativePosition().x && y == m.getRelativePosition().y) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void randomMove(Moses moses) {
+        int new_x = 0;
+        int new_y = 0;
+        boolean overlap = false;
+        for (Sprites sprites : gameView.getElements()) {
+            Point spritesPosition = sprites.getRelativePosition();
+            do {
+                if (spritesPosition != null) {
+                    new_x = spritesPosition.x;
+                    new_y = spritesPosition.y;
+                    if (sprites instanceof Cat || sprites instanceof Ice || sprites instanceof Tombstone || sprites instanceof Door) {
+                        continue;
+                    }
+                    if (sprites instanceof Frog || sprites instanceof Bug || sprites instanceof Anubis || sprites instanceof Pharaoh) {
+                        if (1 < spritesPosition.x && spritesPosition.x < COLUMN && 1 < spritesPosition.y && spritesPosition.y < ROW) {
+                            int randomMovingDirection = (int) Math.floor(Math.random() * 4);
+                            String result;
+                            switch (randomMovingDirection) {
+                                case 0:
+                                    result = sprites.overlap(spritesPosition.x + 1, spritesPosition.y);
+                                    if (!result.equals("CANNOT MOVE")) {
+                                        new_x = spritesPosition.x + 1;
+                                    }
+                                    break;
+                                case 1:
+                                    result = sprites.overlap(spritesPosition.x - 1, spritesPosition.y);
+                                    if (!result.equals("CANNOT MOVE")) {
+                                        new_x = spritesPosition.x - 1;
+                                    }
+                                    break;
+                                case 2:
+                                    result = sprites.overlap(spritesPosition.x, spritesPosition.y + 1);
+                                    if (!result.equals("CANNOT MOVE")) {
+                                        new_y = spritesPosition.y + 1;
+                                    }
+                                    break;
+                                case 3:
+                                    result = sprites.overlap(spritesPosition.x, spritesPosition.y - 1);
+                                    if (!result.equals("CANNOT MOVE")) {
+                                        new_y = spritesPosition.y - 1;
+                                    }
+                            }
+
+                        } else if (spritesPosition.x == 1) {
+                            String result = sprites.overlap(spritesPosition.x + 1, spritesPosition.y);
+                            if (!result.equals("CANNOT MOVE")) {
+                                new_x = spritesPosition.x + 1;
+                                new_y = spritesPosition.y;
+                            }
+
+                        } else if (spritesPosition.y == 1) {
+                            String result = sprites.overlap(spritesPosition.x, spritesPosition.y + 1);
+                            if (!result.equals("CANNOT MOVE")) {
+                                new_x = spritesPosition.x;
+                                new_y = spritesPosition.y + 1;
+                            }
+
+                        } else if (spritesPosition.x == COLUMN) {
+                            String result = sprites.overlap(spritesPosition.x - 1, spritesPosition.y);
+                            if (!result.equals("CANNOT MOVE")) {
+                                new_x = spritesPosition.x - 1;
+                                new_y = spritesPosition.y;
+                            }
+
+                        } else if (spritesPosition.y == ROW) {
+                            String result = sprites.overlap(spritesPosition.x, spritesPosition.y - 1);
+                            if (!result.equals("CANNOT MOVE")) {
+                                new_x = spritesPosition.x;
+                                new_y = spritesPosition.y - 1;
+                            }
+
+                        }
+                    }
+
+                }
+                overlap = overlapForMoses(new_x, new_y, moses);
+            } while (overlap);
+            sprites.setPosition(new_x, new_y);
+            repaint();
+
+        }
+    }
+
     @Override
     public void paintComponent(Graphics g) {
         gameView.drawView(g);
@@ -94,83 +197,129 @@ public class Main extends JPanel implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         Point mosesPoint = moses.getRelativePosition();
-        String result;
-        if (e.getKeyCode() == 37 && mosesPoint.x > 1) {
-            result = moses.overlap(mosesPoint.x - 1, mosesPoint.y);
-            if (result.equals("DIE")) {
-                die();
-                return;
-            }
-            if (!result.equals("CANNOT MOVE")) {
-                mosesPoint.x -= 1;
-            }
-            if (result.equals("NEXT")) {
-                level++;
-                changeLevel();
-                return;
-            }
-            if (result.equals("WIN")) {
-                win();
-                return;
-            }
+        String result = moses.overlap(mosesPoint.x, mosesPoint.y);
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_LEFT:
+
+                if (result.equals("DIE")) {
+                    die();
+                    return;
+                }
+
+                if (mosesPoint.x > 1) {
+                    result = moses.overlap(mosesPoint.x - 1, mosesPoint.y);
+                    if (result.equals("DIE")) {
+                        die();
+                        return;
+                    }
+                    if (!result.equals("CANNOT MOVE")) {
+                        mosesPoint.x -= 1;
+                    }
+                    if (result.equals("NEXT")) {
+                        level++;
+                        changeLevel();
+                        return;
+                    }
+                    if (result.equals("WIN")) {
+                        win();
+                        return;
+                    }
+                }
+
+                randomMove(moses);
+                break;
+
+            case KeyEvent.VK_UP:
+
+                if (result.equals("DIE")) {
+                    die();
+                    return;
+                }
+
+                if (mosesPoint.y > 1) {
+                    result = moses.overlap(mosesPoint.x, mosesPoint.y - 1);
+                    if (result.equals("DIE")) {
+                        die();
+                        return;
+                    }
+                    if (!result.equals("CANNOT MOVE")) {
+                        mosesPoint.y -= 1;
+                    }
+                    if (result.equals("NEXT")) {
+                        level++;
+                        changeLevel();
+                        return;
+                    }
+                    if (result.equals("WIN")) {
+                        win();
+                        return;
+                    }
+                }
+
+                randomMove(moses);
+                break;
+
+            case KeyEvent.VK_RIGHT:
+
+                if (result.equals("DIE")) {
+                    die();
+                    return;
+                }
+
+                if (mosesPoint.x < COLUMN) {
+                    result = moses.overlap(mosesPoint.x + 1, mosesPoint.y);
+                    if (result.equals("DIE")) {
+                        die();
+                        return;
+                    }
+                    if (!result.equals("CANNOT MOVE")) {
+                        mosesPoint.x += 1;
+                    }
+                    if (result.equals("NEXT")) {
+                        level++;
+                        changeLevel();
+                        return;
+                    }
+                    if (result.equals("WIN")) {
+                        win();
+                        return;
+                    }
+                }
+
+                randomMove(moses);
+                break;
+
+            case KeyEvent.VK_DOWN:
+
+                if (result.equals("DIE")) {
+                    die();
+                    return;
+                }
+
+                if (mosesPoint.y < ROW) {
+                    result = moses.overlap(mosesPoint.x, mosesPoint.y + 1);
+                    if (result.equals("DIE")) {
+                        die();
+                        return;
+                    }
+                    if (!result.equals("CANNOT MOVE")) {
+                        mosesPoint.y += 1;
+                    }
+                    if (result.equals("NEXT")) {
+                        level++;
+                        changeLevel();
+                        return;
+                    }
+                    if (result.equals("WIN")) {
+                        win();
+                        return;
+                    }
+                }
+
+                randomMove(moses);
+                break;
         }
-        if (e.getKeyCode() == 38 && mosesPoint.y > 1) {
-            result = moses.overlap(mosesPoint.x, mosesPoint.y - 1);
-            if (result.equals("DIE")) {
-                die();
-                return;
-            }
-            if (!result.equals("CANNOT MOVE")) {
-                mosesPoint.y -= 1;
-            }
-            if (result.equals("NEXT")) {
-                level++;
-                changeLevel();
-                return;
-            }
-            if (result.equals("WIN")) {
-                win();
-                return;
-            }
-        }
-        if (e.getKeyCode() == 39 && mosesPoint.x < COLUMN) {
-            result = moses.overlap(mosesPoint.x + 1, mosesPoint.y);
-            if (result.equals("DIE")) {
-                die();
-                return;
-            }
-            if (!result.equals("CANNOT MOVE")) {
-                mosesPoint.x += 1;
-            }
-            if (result.equals("NEXT")) {
-                level++;
-                changeLevel();
-                return;
-            }
-            if (result.equals("WIN")) {
-                win();
-                return;
-            }
-        }
-        if (e.getKeyCode() == 40 && mosesPoint.y < ROW) {
-            result = moses.overlap(mosesPoint.x, mosesPoint.y + 1);
-            if (result.equals("DIE")) {
-                die();
-                return;
-            }
-            if (!result.equals("CANNOT MOVE")) {
-                mosesPoint.y += 1;
-            }
-            if (result.equals("NEXT")) {
-                level++;
-                changeLevel();
-                return;
-            }
-            if (result.equals("WIN")) {
-                win();
-                return;
-            }
-        }
+
         moses.setPosition(mosesPoint);
         repaint();
     }
