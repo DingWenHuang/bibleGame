@@ -64,7 +64,7 @@ public class Main extends JPanel implements KeyListener {
     private void win() {
         int response = JOptionPane.showOptionDialog(null, "YOU WIM! Want to play again?", "GAME OVER", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, JOptionPane.YES_OPTION);
         switch (response) {
-            case JOptionPane.NO_OPTION, JOptionPane.CANCEL_OPTION:
+            case JOptionPane.NO_OPTION, JOptionPane.CANCEL_OPTION, JOptionPane.CLOSED_OPTION:
                 System.exit(0);
                 break;
             case JOptionPane.YES_OPTION:
@@ -318,6 +318,80 @@ public class Main extends JPanel implements KeyListener {
 
                 randomMove(moses);
                 break;
+            case KeyEvent.VK_A:
+                for (int i = mosesPoint.x - 1; i > 0; i--) {
+                    for (Sprites s : gameView.getElements()) {
+                        if (s.getRelativePosition() != null && s.getRelativePosition().x == i && s.getRelativePosition().y == mosesPoint.y) {
+                            if (s instanceof Cat || s instanceof Ice || s instanceof Tombstone) {
+                                return;
+                            } else if (s instanceof Frog || s instanceof Bug || s instanceof Anubis || s instanceof Pharaoh) {
+                                s.setNullPosition();
+                                repaint();
+                                return;
+                            }
+                        }
+                    }
+                }
+                break;
+            case KeyEvent.VK_W:
+                for (int i = mosesPoint.y - 1; i > 0; i--) {
+                    for (Sprites s : gameView.getElements()) {
+                        if (s.getRelativePosition() != null && s.getRelativePosition().x == mosesPoint.x && s.getRelativePosition().y == i) {
+                            if (s instanceof Cat || s instanceof Ice || s instanceof Tombstone) {
+                                return;
+                            } else if (s instanceof Frog || s instanceof Bug || s instanceof Anubis || s instanceof Pharaoh) {
+                                s.setNullPosition();
+                                repaint();
+                                return;
+                            }
+                        }
+                    }
+                }
+                break;
+            case KeyEvent.VK_D:
+                for (int i = mosesPoint.x + 1; i <= COLUMN; i++) {
+                    for (Sprites s : gameView.getElements()) {
+                        if (s.getRelativePosition() != null && s.getRelativePosition().x == i && s.getRelativePosition().y == mosesPoint.y) {
+                            if (s instanceof Cat || s instanceof Ice || s instanceof Tombstone) {
+                                return;
+                            } else if (s instanceof Frog || s instanceof Bug || s instanceof Anubis || s instanceof Pharaoh) {
+                                s.setNullPosition();
+                                repaint();
+                                return;
+                            }
+                        }
+                    }
+                }
+                break;
+            case KeyEvent.VK_S:
+                for (int i = mosesPoint.y + 1; i <= ROW; i++) {
+                    for (Sprites s : gameView.getElements()) {
+                        if (s.getRelativePosition() != null && s.getRelativePosition().x == mosesPoint.x && s.getRelativePosition().y == i) {
+                            if (s instanceof Cat || s instanceof Ice || s instanceof Tombstone) {
+                                return;
+                            } else if (s instanceof Frog || s instanceof Bug || s instanceof Anubis || s instanceof Pharaoh) {
+                                s.setNullPosition();
+                                repaint();
+                                return;
+                            }
+                        }
+                    }
+                }
+                break;
+            case KeyEvent.VK_SPACE:
+                for (Sprites s : gameView.getElements()) {
+                    if (s.getRelativePosition() != null && s.getRelativePosition().x == mosesPoint.x && s.getRelativePosition().y == mosesPoint.y) {
+                        if (s instanceof Cat || s instanceof Ice || s instanceof Tombstone) {
+                            return;
+                        } else if (s instanceof Frog || s instanceof Bug || s instanceof Anubis || s instanceof Pharaoh) {
+                            s.setNullPosition();
+                            repaint();
+                            return;
+                        }
+                    }
+                }
+                break;
+
         }
 
         moses.setPosition(mosesPoint);
